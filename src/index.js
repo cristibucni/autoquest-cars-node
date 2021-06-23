@@ -3,21 +3,12 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import makeCallback from "./express-callback";
 import CarController from "./controllers/CarController";
-import { makeDb } from "./data-access";
+
 dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
 // TODO: figure out DNT compliance.
-
-(async function setupDb() {
-  console.log("Setting up database...");
-  // database collection will automatically be created if it does not exist
-  // indexes will only be added if they don't exist
-  const db = await makeDb();
-  const result = await db.collection("cars");
-  console.log("Database setup complete...");
-})();
 
 app.use((_, res, next) => {
   res.set({ Tk: "!" });

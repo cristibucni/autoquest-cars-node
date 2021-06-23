@@ -1,5 +1,5 @@
-import makeCarsDB from "./cars-db";
 import mongodb from "mongodb";
+import CarsRepository from "./CarsRepository";
 
 const MongoClient = mongodb.MongoClient;
 const mongoKey = process.env.MONGO_KEY;
@@ -16,5 +16,5 @@ export async function makeDb() {
   return client.db(dbName);
 }
 
-const carsDB = makeCarsDB({ makeDb });
+const carsDB = new CarsRepository({ makeDb });
 export default carsDB;

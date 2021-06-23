@@ -1,27 +1,13 @@
-import CarsService from "../use-cases";
+import CarsService from "../services";
 
 class CarController {
-  #addCar;
-  #readCar;
-  #readCars;
-  #removeCar;
-  #editCar;
-
-  constructor(addCar, removeCar, readCar, editCar, readCars) {
-    this.#addCar = addCar;
-    this.#readCar = readCar;
-    this.#readCars = readCars;
-    this.#removeCar = removeCar;
-    this.#editCar = editCar;
-  }
-
   getCars = async (httpRequest) => {
     const headers = {
       "Content-Type": "application/json",
     };
     const query = httpRequest.query || {};
     try {
-      const cars = await this.#readCars(query);
+      const cars = await CarsService.readCars(query);
       return {
         headers,
         statusCode: 200,
@@ -45,7 +31,7 @@ class CarController {
       "Content-Type": "application/json",
     };
     try {
-      const car = await this.#readCar({
+      const car = await CarsService.readCar({
         id: httpRequest.params.id,
       });
       return {
@@ -73,7 +59,7 @@ class CarController {
       if (httpRequest.headers["Referer"]) {
         source.referrer = httpRequest.headers["Referer"];
       }
-      const posted = await this.#addCar({
+      const posted = await CarsService.addCar({
         ...carInfo,
       });
       return {
@@ -112,7 +98,7 @@ class CarController {
         ...carInfo,
         id: httpRequest.params.id,
       };
-      const patched = await this.#editCar(toEdit);
+      const patched = await CarsService.editCar(toEdit);
       return {
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +138,9 @@ class CarController {
       "Content-Type": "application/json",
     };
     try {
-      const deleted = await this.#removeCar({ id: httpRequest.params.id });
+      const deleted = await CarsService.removeCar({
+        id: httpRequest.params.id,
+      });
       return {
         headers,
         statusCode: deleted.deletedCount === 0 ? 404 : 200,
@@ -172,10 +160,4 @@ class CarController {
   };
 }
 
-export default new CarController(
-  CarsService.addCar,
-  CarsService.removeCar,
-  CarsService.readCar,
-  CarsService.editCar,
-  CarsService.readCars
-);
+export default new CarController();

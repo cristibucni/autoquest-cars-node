@@ -1,5 +1,4 @@
-import carsDB from "../data-access";
-import makeCar from "../entities/car";
+import Car from "../entities/Car";
 
 class CarsService {
   #carsDB;
@@ -9,7 +8,7 @@ class CarsService {
   }
 
   addCar = async (carInfo) => {
-    const car = makeCar(carInfo);
+    const car = new Car(carInfo);
     const exists = await this.#carsDB.findByVIN({ vin: car.getVin() });
     if (exists) {
       return exists;
@@ -36,7 +35,7 @@ class CarsService {
     if (!existing) {
       throw new RangeError("Car not found.");
     }
-    const car = makeCar({ ...existing, ...changes, modifiedOn: null });
+    const car = new Car({ ...existing, ...changes, modifiedOn: null });
 
     const updated = await this.#carsDB.update({
       make: car.getMake(),
@@ -94,4 +93,4 @@ class CarsService {
   };
 }
 
-export default new CarsService(carsDB);
+export default CarsService;
