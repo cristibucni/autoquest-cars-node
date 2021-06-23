@@ -1,17 +1,17 @@
-import { CarsService } from "../services";
+import { CarBrandsService } from "../services";
 
-class CarController {
-  getCars = async (httpRequest) => {
+class CarBrandController {
+  getBrands = async (httpRequest) => {
     const headers = {
       "Content-Type": "application/json",
     };
     const query = httpRequest.query || {};
     try {
-      const cars = await CarsService.readCars(query);
+      const brands = await CarBrandsService.readBrands(query);
       return {
         headers,
         statusCode: 200,
-        body: cars,
+        body: brands,
       };
     } catch (e) {
       // TODO: Error logging
@@ -26,18 +26,18 @@ class CarController {
     }
   };
 
-  getCar = async (httpRequest) => {
+  getBrand = async (httpRequest) => {
     const headers = {
       "Content-Type": "application/json",
     };
     try {
-      const car = await CarsService.readCar({
+      const brand = await CarBrandsService.readBrand({
         id: httpRequest.params.id,
       });
       return {
         headers,
         statusCode: 200,
-        body: car,
+        body: brand,
       };
     } catch (e) {
       // TODO: Error logging
@@ -52,15 +52,15 @@ class CarController {
     }
   };
 
-  postCar = async (httpRequest) => {
+  postBrand = async (httpRequest) => {
     try {
-      const { source = {}, ...carInfo } = httpRequest.body;
+      const { source = {}, ...brandInfo } = httpRequest.body;
       source.browser = httpRequest.headers["User-Agent"];
       if (httpRequest.headers["Referer"]) {
         source.referrer = httpRequest.headers["Referer"];
       }
-      const posted = await CarsService.addCar({
-        ...carInfo,
+      const posted = await CarBrandsService.addBrand({
+        ...brandInfo,
       });
       return {
         headers: {
@@ -86,19 +86,19 @@ class CarController {
     }
   };
 
-  patchCar = async (httpRequest) => {
+  patchBrand = async (httpRequest) => {
     try {
-      const { source = {}, ...carInfo } = httpRequest.body;
+      const { source = {}, ...brandInfo } = httpRequest.body;
       source.ip = httpRequest.ip;
       source.browser = httpRequest.headers["User-Agent"];
       if (httpRequest.headers["Referer"]) {
         source.referrer = httpRequest.headers["Referer"];
       }
       const toEdit = {
-        ...carInfo,
+        ...brandInfo,
         id: httpRequest.params.id,
       };
-      const patched = await CarsService.editCar(toEdit);
+      const patched = await CarBrandsService.editCar(toEdit);
       return {
         headers: {
           "Content-Type": "application/json",
@@ -133,12 +133,12 @@ class CarController {
     }
   };
 
-  deleteCar = async (httpRequest) => {
+  deleteBrand = async (httpRequest) => {
     const headers = {
       "Content-Type": "application/json",
     };
     try {
-      const deleted = await CarsService.removeCar({
+      const deleted = await CarBrandsService.removeBrand({
         id: httpRequest.params.id,
       });
       return {
@@ -160,4 +160,4 @@ class CarController {
   };
 }
 
-export default new CarController();
+export default new CarBrandController();

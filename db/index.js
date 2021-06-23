@@ -5,6 +5,7 @@ dotenv.config();
   console.log("Setting up database...");
   const db = await makeDb();
   await db.collection("cars");
+  await db.collection("brands");
   console.log("Database setup complete...");
   process.exit();
 })();

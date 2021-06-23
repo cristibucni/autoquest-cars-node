@@ -1,4 +1,7 @@
-import carsDB from "../repository";
-import CarsService from "./CarsService";
+import { carsDB, brandsDB } from "../repository";
+import carsService from "./CarsService";
+import carBrandService from "./CarBrandsService";
 
-export default new CarsService(carsDB);
+const CarsService = new carsService(carsDB);
+const CarBrandsService = new carBrandService(brandsDB);
+export { CarsService, CarBrandsService };
