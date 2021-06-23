@@ -5,8 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-.idea
-yarn.lock
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
@@ -41,6 +40,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+.idea/
 
 # TypeScript v1 declaration files
 typings/
@@ -103,3 +103,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# additional files
+yarn.lock
+package-lock.json
