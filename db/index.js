@@ -6,6 +6,7 @@ dotenv.config();
   const db = await makeDb();
   await db.collection("cars");
   await db.collection("brands");
+  await db.collection("fuelTypes");
   console.log("Database setup complete...");
   process.exit();
 })();

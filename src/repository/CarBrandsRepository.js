@@ -1,14 +1,9 @@
 import { ObjectId } from "mongodb";
+import AbstractRepository from "./AbstractRepository";
 
-class CarBrandsRepository {
-  #makeDb;
-
-  constructor({ makeDb }) {
-    this.#makeDb = makeDb;
-  }
-
+class CarBrandsRepository extends AbstractRepository {
   findAll = async (query = {}) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db.collection("brands").find(query);
     const brands = (await result.toArray()).map(({ _id: id, ...found }) => ({
       id,
@@ -26,7 +21,7 @@ class CarBrandsRepository {
   };
 
   findById = async ({ id: _id }) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db
       .collection("brands")
       .find({ _id: new ObjectId(_id) });
@@ -40,7 +35,7 @@ class CarBrandsRepository {
   };
 
   findByName = async (brand) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db.collection("brands").find({ name: brand.name });
     const found = await result.toArray();
     if (found.length === 0) {
@@ -52,14 +47,14 @@ class CarBrandsRepository {
   };
 
   insert = async ({ ...brandInfo }) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db.collection("brands").insertOne({ ...brandInfo });
     const { _id: id, ...insertedInfo } = result.ops[0];
     return { id, ...insertedInfo };
   };
 
   update = async ({ _id, ...brandInfo }) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db
       .collection("brands")
       .updateOne({ _id }, { $set: { ...brandInfo } });
@@ -67,15 +62,9 @@ class CarBrandsRepository {
   };
 
   remove = async ({ id: _id }) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db.collection("brands").deleteOne({ _id });
     return result.deletedCount;
-  };
-
-  // Query to get all models for the brand based on id
-  getModelsForBrand = async (id) => {
-    const db = await this.#makeDb();
-    return await db.collection("cars").find({ make: id }).toArray();
   };
 }
 

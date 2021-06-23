@@ -4,7 +4,7 @@ class Car {
     model,
     year,
     vin,
-    fuel,
+    fuelType,
     createdOn = Date.now(),
     modifiedOn = Date.now(),
   }) {
@@ -20,7 +20,7 @@ class Car {
     if (!year) {
       throw new Error("Car must have a year.");
     }
-    if (!fuel) {
+    if (!fuelType) {
       throw new Error("Car must have a fuel type.");
     }
 
@@ -28,7 +28,7 @@ class Car {
     this.model = model;
     this.year = year;
     this.vin = vin;
-    this.fuel = fuel;
+    this.fuelType = fuelType;
     this.createdOn = createdOn;
     this.modifiedOn = modifiedOn;
   }
@@ -45,7 +45,7 @@ class Car {
 
   getYear = () => this.year;
 
-  getFuelType = () => this.fuel;
+  getFuelType = () => this.fuelType;
 }
 
 export default Car;
