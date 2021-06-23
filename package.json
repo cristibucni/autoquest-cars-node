@@ -1,0 +1,9 @@
+{
+  "name": "autoquest-cn",
+  "version": "1.0.0",
+  "description": "autoquest cars node microservice",
+  "main": "index.js",
+  "repository": "https://github.com/cristibucni/autoquest-cars-node.git",
+  "author": "Cristian Bucnaru <cristian.bucnaru@gmail.com>",
+  "license": "MIT"
+}
