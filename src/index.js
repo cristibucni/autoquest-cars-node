@@ -5,6 +5,7 @@ import makeCallback from "./express-callback";
 import CarController from "./controllers/CarController";
 import CarBrandController from "./controllers/CarBrandController";
 import FuelTypeController from "./controllers/FuelTypeController";
+import EngineController from "./controllers/EngineController";
 
 dotenv.config();
 
@@ -47,6 +48,15 @@ app.delete(`/fuel_types/:id`, makeCallback(FuelTypeController.deleteFuelType));
 app.delete(`/fuel_types`, makeCallback(FuelTypeController.deleteFuelType));
 app.patch(`/fuel_types/:id`, makeCallback(FuelTypeController.patchFuelType));
 app.patch(`/fuel_types`, makeCallback(FuelTypeController.patchFuelType));
+
+// Engines
+app.get(`/engines/:id`, makeCallback(EngineController.getEngine));
+app.get(`/engines`, makeCallback(EngineController.getEngines));
+app.post(`/engines`, makeCallback(EngineController.postEngine));
+app.delete(`/engines/:id`, makeCallback(EngineController.deleteEngine));
+app.delete(`/engines`, makeCallback(EngineController.deleteEngine));
+app.patch(`/engines/:id`, makeCallback(EngineController.patchEngine));
+app.patch(`/engines`, makeCallback(EngineController.patchEngine));
 
 // listen for requests
 app.listen(process.env.APP_PORT, () => {

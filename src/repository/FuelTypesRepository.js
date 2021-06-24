@@ -1,14 +1,9 @@
 import { ObjectId } from "mongodb";
+import AbstractRepository from "./AbstractRepository";
 
-class FuelTypesRepository {
-  #makeDb;
-
-  constructor({ makeDb }) {
-    this.#makeDb = makeDb;
-  }
-
+class FuelTypesRepository extends AbstractRepository {
   findAll = async (query = {}) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db.collection("fuelTypes").find(query);
     return (await result.toArray()).map(({ _id: id, ...found }) => ({
       id,
@@ -17,7 +12,7 @@ class FuelTypesRepository {
   };
 
   findById = async ({ id: _id }) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db
       .collection("fuelTypes")
       .find({ _id: new ObjectId(_id) });
@@ -31,7 +26,7 @@ class FuelTypesRepository {
   };
 
   findByName = async (fuelTypeName) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db
       .collection("fuelTypes")
       .findOne({ name: fuelTypeName });
@@ -44,7 +39,7 @@ class FuelTypesRepository {
   };
 
   insert = async ({ ...fuelTypeInfo }) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db
       .collection("fuelTypes")
       .insertOne({ ...fuelTypeInfo });
@@ -53,7 +48,7 @@ class FuelTypesRepository {
   };
 
   update = async ({ _id, ...fuelTypeInfo }) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db
       .collection("fuelTypes")
       .updateOne({ _id }, { $set: { ...fuelTypeInfo } });
@@ -61,7 +56,7 @@ class FuelTypesRepository {
   };
 
   remove = async ({ id: _id }) => {
-    const db = await this.#makeDb();
+    const db = await this.makeDb();
     const result = await db.collection("fuelTypes").deleteOne({ _id });
     return result.deletedCount;
   };

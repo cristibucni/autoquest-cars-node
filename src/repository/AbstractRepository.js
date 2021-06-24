@@ -8,11 +8,15 @@ class AbstractRepository {
   }
 
   // Query to get fuel type name based on fuelType ref
-  getFuelForModel = async (fuelTypeId) => {
+  getFuelType = async (fuelTypeId) => {
     const db = await this.makeDb();
-    return await db
+    const result = await db
       .collection("fuelTypes")
       .findOne({ _id: new ObjectId(fuelTypeId) });
+    return {
+      name: result.name,
+      id: result._id,
+    };
   };
 
   // Query to get all models for the brand based on id
@@ -25,9 +29,7 @@ class AbstractRepository {
     // Populate fuel type for every model
     await Promise.all(
       models.map(async (model, idx) => {
-        models[idx].fuelType = (
-          await this.getFuelForModel(model.fuelType)
-        ).name;
+        models[idx].fuelType = (await this.getFuelType(model.fuelType)).name;
       })
     );
     return models;

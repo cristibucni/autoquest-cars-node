@@ -1,9 +1,13 @@
-import { carsDB, brandsDB, fuelTypesDB } from "../repository";
-import carsService from "./CarsService";
-import carBrandService from "./CarBrandsService";
-import fuelTypesService from "./FuelTypesService";
+import { carsDB, brandsDB, fuelTypesDB, enginesDB } from "../repository";
 
-const CarsService = new carsService(carsDB);
-const CarBrandsService = new carBrandService(brandsDB);
-const FuelTypesService = new fuelTypesService(fuelTypesDB);
-export { CarsService, CarBrandsService, FuelTypesService };
+import Cars from "./CarsService";
+import CarBrands from "./CarBrandsService";
+import FuelTypes from "./FuelTypesService";
+import Engines from "./EnginesService";
+
+const CarsService = new Cars(carsDB);
+const CarBrandsService = new CarBrands(brandsDB);
+const FuelTypesService = new FuelTypes(fuelTypesDB);
+const EnginesService = new Engines(enginesDB);
+
+export { CarsService, CarBrandsService, FuelTypesService, EnginesService };

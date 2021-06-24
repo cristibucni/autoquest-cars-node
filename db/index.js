@@ -7,6 +7,7 @@ dotenv.config();
   await db.collection("cars");
   await db.collection("brands");
   await db.collection("fuelTypes");
+  await db.collection("engines");
   console.log("Database setup complete...");
   process.exit();
 })();

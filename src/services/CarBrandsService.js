@@ -1,20 +1,15 @@
 import CarBrand from "../entities/CarBrand";
+import AbstractService from "./AbstractService";
 
-class CarsBrandService {
-  #db;
-
-  constructor(db) {
-    this.#db = db;
-  }
-
+class CarsBrandService extends AbstractService {
   addBrand = async (brandInfo) => {
     const brand = new CarBrand(brandInfo);
-    const exists = await this.#db.findById({ name: brand.getName() });
+    const exists = await this.db.findById({ name: brand.getName() });
     if (exists) {
       return exists;
     }
 
-    return this.#db.insert({
+    return this.db.insert({
       name: brand.getName(),
       createdOn: brand.getCreatedOn(),
       modifiedOn: brand.getModifiedOn(),
@@ -25,13 +20,13 @@ class CarsBrandService {
     if (!id) {
       throw new Error("You must supply a brand id.");
     }
-    return await this.#db.findById({
+    return await this.db.findById({
       id,
     });
   };
 
   readBrands = async (query) => {
-    return await this.#db.findAll(query);
+    return await this.db.findAll(query);
   };
 
   removeBrand = async ({ id } = {}) => {
@@ -39,15 +34,15 @@ class CarsBrandService {
       throw new Error("You must supply a brand id.");
     }
 
-    const brandToDelete = await this.#db.findById({ id });
+    const brandToDelete = await this.db.findById({ id });
 
-    if (!this.#db) {
+    if (!this.db) {
       return {
         deletedCount: 0,
         message: "Brand not found, nothing to delete.",
       };
     }
-    await this.#db.remove(brandToDelete);
+    await this.db.remove(brandToDelete);
     return {
       deletedCount: 1,
       message: "Brand deleted.",

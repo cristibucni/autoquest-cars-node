@@ -2,6 +2,7 @@ import mongodb from "mongodb";
 import CarsRepository from "./CarsRepository";
 import CarBrandsRepository from "./CarBrandsRepository";
 import FuelTypesRepository from "./FuelTypesRepository";
+import EnginesRespository from "./EnginesRespository";
 
 const MongoClient = mongodb.MongoClient;
 const mongoKey = process.env.MONGO_KEY;
@@ -21,4 +22,5 @@ export async function makeDb() {
 const carsDB = new CarsRepository({ makeDb });
 const brandsDB = new CarBrandsRepository({ makeDb });
 const fuelTypesDB = new FuelTypesRepository({ makeDb });
-export { carsDB, brandsDB, fuelTypesDB };
+const enginesDB = new EnginesRespository({ makeDb });
+export { carsDB, brandsDB, fuelTypesDB, enginesDB };

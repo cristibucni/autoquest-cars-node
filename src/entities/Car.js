@@ -1,4 +1,6 @@
-class Car {
+import AbstractEntity from "./AbstractEntity";
+
+class Car extends AbstractEntity {
   constructor({
     make,
     model,
@@ -24,22 +26,18 @@ class Car {
       throw new Error("Car must have a fuel type.");
     }
 
+    super({ createdOn, modifiedOn });
+
     this.make = make;
     this.model = model;
     this.year = year;
     this.vin = vin;
     this.fuelType = fuelType;
-    this.createdOn = createdOn;
-    this.modifiedOn = modifiedOn;
   }
 
   getMake = () => this.make;
 
   getModel = () => this.model;
-
-  getCreatedOn = () => this.createdOn;
-
-  getModifiedOn = () => this.modifiedOn;
 
   getVin = () => this.vin;
 

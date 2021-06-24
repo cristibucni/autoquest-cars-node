@@ -1,19 +1,17 @@
-class CarBrand {
+import AbstractEntity from "./AbstractEntity";
+
+class CarBrand extends AbstractEntity {
   constructor({ name, createdOn = Date.now(), modifiedOn = Date.now() }) {
     if (!name) {
       throw new Error("Brand must have a name.");
     }
 
+    super({ createdOn, modifiedOn });
+
     this.name = name;
-    this.createdOn = createdOn;
-    this.modifiedOn = modifiedOn;
   }
 
   getName = () => this.name;
-
-  getCreatedOn = () => this.createdOn;
-
-  getModifiedOn = () => this.modifiedOn;
 }
 
 export default CarBrand;

@@ -20,7 +20,7 @@ class CarsRepository extends AbstractRepository {
     //Populate fuel type
     await Promise.all(
       cars.map(async (car, idx) => {
-        cars[idx].fuelType = (await this.getFuelForModel(car.fuelType)).name;
+        cars[idx].fuelType = (await this.getFuelType(car.fuelType)).name;
       })
     );
 
@@ -40,7 +40,7 @@ class CarsRepository extends AbstractRepository {
       id,
       ...info,
       make: (await this.getBrandForModel(info.make)).name,
-      fuel: (await this.getFuelForModel(info.fuelType)).name,
+      fuel: (await this.getFuelType(info.fuelType)).name,
     };
   };
 
@@ -55,7 +55,7 @@ class CarsRepository extends AbstractRepository {
       id,
       ...info,
       make: (await this.getBrandForModel(info.make)).name,
-      fuel: (await this.getFuelForModel(info.fuelType)).name,
+      fuel: (await this.getFuelType(info.fuelType)).name,
     };
   };
 
