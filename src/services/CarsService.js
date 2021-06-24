@@ -1,20 +1,26 @@
 import Car from "../entities/Car";
 import AbstractService from "./AbstractService";
+import { ObjectId } from "mongodb";
 
 class CarsService extends AbstractService {
   addCar = async (carInfo) => {
     const car = new Car(carInfo);
-    const exists = await this.db.findByVIN({ vin: car.getVin() });
+    const exists = await this.db.findByModel({ model: car.getModel() });
     if (exists) {
       return exists;
     }
 
     return this.db.insert({
-      make: car.getMake(),
+      makeRef: new ObjectId(car.getMakeRef()),
       model: car.getModel(),
-      vin: car.getVin(),
-      year: car.getYear(),
-      fuel: car.getFuelType(),
+      enginesRef: car
+        .getEnginesRef()
+        .map((engineRef) => new ObjectId(engineRef)),
+      vehicleTypesRef: car
+        .getVehicleTypesRef()
+        .map((vehicleTypeRef) => new ObjectId(vehicleTypeRef)),
+      startYear: car.getStartYear(),
+      endYear: car.getEndYear(),
       createdOn: car.getCreatedOn(),
       modifiedOn: car.getModifiedOn(),
     });
@@ -33,11 +39,16 @@ class CarsService extends AbstractService {
     const car = new Car({ ...existing, ...changes, modifiedOn: null });
 
     const updated = await this.db.update({
-      make: car.getMake(),
+      makeRef: new ObjectId(car.getMakeRef()),
       model: car.getModel(),
-      vin: car.getVin(),
-      year: car.getYear(),
-      fuel: car.getFuelType(),
+      enginesRef: car
+        .getEnginesRef()
+        .map((engineRef) => new ObjectId(engineRef)),
+      vehicleTypesRef: car
+        .getVehicleTypesRef()
+        .map((vehicleTypeRef) => new ObjectId(vehicleTypeRef)),
+      startYear: car.getStartYear(),
+      endYear: car.getEndYear(),
       createdOn: car.getCreatedOn(),
       modifiedOn: car.getModifiedOn(),
     });
@@ -50,15 +61,6 @@ class CarsService extends AbstractService {
     }
     return await this.db.findById({
       id,
-    });
-  };
-
-  readCarByVIN = async ({ vin } = {}) => {
-    if (!vin) {
-      throw new Error("You must supply a car VIN.");
-    }
-    return await this.db.findByVIN({
-      vin,
     });
   };
 

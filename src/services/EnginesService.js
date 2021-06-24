@@ -1,7 +1,6 @@
 import Engine from "../entities/Engine";
 import AbstractService from "./AbstractService";
 import { ObjectId } from "mongodb";
-import VehicleType from "../entities/VehicleType";
 
 class EnginesServiceService extends AbstractService {
   addEngine = async (engineInfo) => {
@@ -50,9 +49,7 @@ class EnginesServiceService extends AbstractService {
     if (!id) {
       throw new Error("You must supply an engine id.");
     }
-    return await this.db.findById({
-      id,
-    });
+    return await this.db.getEngine(id);
   };
 
   readEngines = async (query) => {

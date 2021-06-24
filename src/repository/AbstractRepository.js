@@ -5,10 +5,11 @@ class AbstractRepository {
 
   constructor({ makeDb }) {
     this.makeDb = makeDb;
+    this.KW_TO_METRIC_HP = 1.3596216173;
   }
 
   // Query to get fuel type name based on fuelType ref
-  getFuelType = async (fuelTypeId) => {
+  findFuelTypeById = async (fuelTypeId) => {
     const db = await this.makeDb();
     const result = await db
       .collection("fuelTypes")
@@ -16,31 +17,29 @@ class AbstractRepository {
     return {
       name: result.name,
       id: result._id,
+      createdOn: result.createdOn,
+      modifiedOn: result.modifiedOn,
     };
   };
 
-  // Query to get all models for the brand based on id
-  getModelsForBrand = async (id) => {
+  // Query to get engine by engineRef
+  findEngineById = async (engineRef) => {
     const db = await this.makeDb();
-    const models = await (
-      await db.collection("cars").find({ make: id })
-    ).toArray();
+    const engine = await db
+      .collection("engines")
+      .findOne({ _id: new ObjectId(engineRef) });
+    engine.fuel = await this.findFuelTypeById(engine.fuelTypeReference);
+    engine.powerHP = Math.floor(this.KW_TO_METRIC_HP * engine.power);
 
-    // Populate fuel type for every model
-    await Promise.all(
-      models.map(async (model, idx) => {
-        models[idx].fuelType = (await this.getFuelType(model.fuelType)).name;
-      })
-    );
-    return models;
+    return engine;
   };
 
-  // Query to get all models for the brand based on id
-  getBrandForModel = async (brandId) => {
+  // Query to get engine by engineRef
+  findVehicleTypeById = async (vehicleTypeRef) => {
     const db = await this.makeDb();
     return await db
-      .collection("brands")
-      .findOne({ _id: new ObjectId(brandId) });
+      .collection("vehicleTypes")
+      .findOne({ _id: new ObjectId(vehicleTypeRef) });
   };
 }
 

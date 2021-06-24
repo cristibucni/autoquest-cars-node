@@ -12,33 +12,6 @@ class VehicleTypesRepository extends AbstractRepository {
     }));
   };
 
-  findById = async ({ id: _id }) => {
-    const db = await this.makeDb();
-    const result = await db
-      .collection("vehicleTypes")
-      .find({ _id: new ObjectId(_id) });
-    const found = await result.toArray();
-    if (found.length === 0) {
-      return null;
-    }
-    const { _id: id, ...info } = found[0];
-
-    return { id, ...info };
-  };
-
-  findByName = async (vehicleTypeName) => {
-    const db = await this.makeDb();
-    const result = await db
-      .collection("vehicleTypes")
-      .findOne({ name: vehicleTypeName });
-    if (!result) {
-      return null;
-    }
-    const { _id: id, ...info } = result;
-
-    return { id, ...info };
-  };
-
   insert = async ({ ...vehicleTypeInfo }) => {
     const db = await this.makeDb();
     const result = await db

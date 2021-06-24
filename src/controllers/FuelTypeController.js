@@ -98,7 +98,7 @@ class FuelTypeController {
         ...fuelTypeInfo,
         id: httpRequest.params.id,
       };
-      const patched = await FuelTypesService.editCar(toEdit);
+      const patched = await FuelTypesService.editFuelType(toEdit);
       return {
         headers: {
           "Content-Type": "application/json",

@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import AbstractRepository from "./AbstractRepository";
 
 class FuelTypesRepository extends AbstractRepository {
@@ -11,25 +10,10 @@ class FuelTypesRepository extends AbstractRepository {
     }));
   };
 
-  findById = async ({ id: _id }) => {
+  findByName = async (name) => {
     const db = await this.makeDb();
-    const result = await db
-      .collection("fuelTypes")
-      .find({ _id: new ObjectId(_id) });
-    const found = await result.toArray();
-    if (found.length === 0) {
-      return null;
-    }
-    const { _id: id, ...info } = found[0];
+    const result = await db.collection("fuelTypes").findOne({ name: name });
 
-    return { id, ...info };
-  };
-
-  findByName = async (fuelTypeName) => {
-    const db = await this.makeDb();
-    const result = await db
-      .collection("fuelTypes")
-      .findOne({ name: fuelTypeName });
     if (!result) {
       return null;
     }
@@ -49,9 +33,11 @@ class FuelTypesRepository extends AbstractRepository {
 
   update = async ({ _id, ...fuelTypeInfo }) => {
     const db = await this.makeDb();
+
     const result = await db
       .collection("fuelTypes")
       .updateOne({ _id }, { $set: { ...fuelTypeInfo } });
+
     return result.modifiedCount > 0 ? { id: _id, ...fuelTypeInfo } : null;
   };
 

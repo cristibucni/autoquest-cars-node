@@ -4,7 +4,7 @@ import AbstractService from "./AbstractService";
 class VehicleTypesService extends AbstractService {
   addVehicleType = async (vehicleTypeInfo) => {
     const vehicleType = new VehicleType(vehicleTypeInfo);
-    const exists = await this.db.findById({ name: vehicleType.getName() });
+    const exists = await this.db.getVehicleType(id);
     if (exists) {
       return exists;
     }
@@ -21,7 +21,7 @@ class VehicleTypesService extends AbstractService {
       throw new Error("You must supply an id.");
     }
 
-    const existing = await this.db.findById({ id });
+    const existing = await this.db.getVehicleType(id);
 
     if (!existing) {
       throw new RangeError("Vehicle type not found.");
@@ -44,9 +44,7 @@ class VehicleTypesService extends AbstractService {
     if (!id) {
       throw new Error("You must supply a vehicle type id.");
     }
-    return await this.db.findById({
-      id,
-    });
+    return await this.db.getVehicleType(id);
   };
 
   readVehicleTypes = async (query) => {
@@ -58,7 +56,7 @@ class VehicleTypesService extends AbstractService {
       throw new Error("You must supply an vehicle type id.");
     }
 
-    const vehicleTypeToDelete = await this.db.findById({ id });
+    const vehicleTypeToDelete = await this.db.getVehicleType(id);
 
     if (!this.db) {
       return {

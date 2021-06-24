@@ -31,7 +31,25 @@ class CarBrandsRepository extends AbstractRepository {
     }
     const { _id: id, ...info } = found[0];
 
-    return { id, ...info, models: await this.getModelsForBrand(id) };
+    return { id, ...info, models: await this.findModelsByBrandId(id) };
+  };
+
+  // Query to get all models for the brand based on id
+  findModelsByBrandId = async (id) => {
+    const db = await this.makeDb();
+    const models = await (
+      await db.collection("cars").find({ make: id })
+    ).toArray();
+
+    // Populate fuel type for every model
+    await Promise.all(
+      models.map(async (model, idx) => {
+        models[idx].fuelType = (
+          await this.findFuelTypeById(model.fuelType)
+        ).name;
+      })
+    );
+    return models;
   };
 
   findByName = async (brand) => {
@@ -43,7 +61,7 @@ class CarBrandsRepository extends AbstractRepository {
     }
     const { _id: id, ...info } = found[0];
 
-    return { id, ...info, models: await this.getModelsForBrand(id) };
+    return { id, ...info, models: await this.findModelsByBrandId(id) };
   };
 
   insert = async ({ ...brandInfo }) => {

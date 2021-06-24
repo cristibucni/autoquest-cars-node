@@ -13,14 +13,10 @@ class CarsRepository extends AbstractRepository {
     //Populate brand
     await Promise.all(
       cars.map(async (car, idx) => {
-        cars[idx].make = (await this.getBrandForModel(car.make)).name;
-      })
-    );
-
-    //Populate fuel type
-    await Promise.all(
-      cars.map(async (car, idx) => {
-        cars[idx].fuelType = (await this.getFuelType(car.fuelType)).name;
+        cars[idx].make = (await this.findBrandById(car.makeRef)).name;
+        delete cars[idx].makeRef;
+        delete cars[idx].enginesRef;
+        delete cars[idx].vehicleTypesRef;
       })
     );
 
@@ -36,26 +32,32 @@ class CarsRepository extends AbstractRepository {
       return null;
     }
     const { _id: id, ...info } = result;
-    return {
+    const car = {
       id,
+      make: (await this.findBrandById(info.makeRef)).name,
       ...info,
-      make: (await this.getBrandForModel(info.make)).name,
-      fuel: (await this.getFuelType(info.fuelType)).name,
+
+      engines: await this.findEnginesByIds(info.enginesRef),
+      vehicleTypes: await this.findVehicleTypesByIds(info.vehicleTypesRef),
     };
+    delete car.makeRef;
+    delete car.enginesRef;
+    delete car.vehicleTypesRef;
+
+    return car;
   };
 
-  findByVIN = async (car) => {
+  findByModel = async (car) => {
     const db = await this.makeDb();
-    const result = await db.collection("cars").findOne({ vin: car.vin });
+    const result = await db.collection("cars").findOne({ model: car.model });
     if (!result) {
       return null;
     }
     const { _id: id, ...info } = result;
     return {
       id,
+      make: (await this.findBrandById(info.make)).name,
       ...info,
-      make: (await this.getBrandForModel(info.make)).name,
-      fuel: (await this.getFuelType(info.fuelType)).name,
     };
   };
 
@@ -78,6 +80,40 @@ class CarsRepository extends AbstractRepository {
     const db = await this.makeDb();
     const result = await db.collection("cars").deleteOne({ _id });
     return result.deletedCount;
+  };
+
+  // Query to get all models for the brand based on id
+  findBrandById = async (brandId) => {
+    const db = await this.makeDb();
+    return await db
+      .collection("brands")
+      .findOne({ _id: new ObjectId(brandId) });
+  };
+
+  // Query to get all engines for a model based on enginesRef
+  findVehicleTypesByIds = async (vehicleTypesRef) => {
+    const vehicleTypes = [];
+
+    // Populate fuel type for every model
+    await Promise.all(
+      vehicleTypesRef.map(async (engineRef) => {
+        vehicleTypes.push(await this.findVehicleTypeById(engineRef));
+      })
+    );
+    return vehicleTypes;
+  };
+
+  // Query to get all engines for a model based on enginesRef
+  findEnginesByIds = async (enginesRef) => {
+    const engines = [];
+
+    // Populate fuel type for every model
+    await Promise.all(
+      enginesRef.map(async (engineRef) => {
+        engines.push(await this.findEngineById(engineRef));
+      })
+    );
+    return engines;
   };
 }
 

@@ -2,48 +2,52 @@ import AbstractEntity from "./AbstractEntity";
 
 class Car extends AbstractEntity {
   constructor({
-    make,
+    makeRef,
     model,
-    year,
-    vin,
-    fuelType,
+    enginesRef,
+    vehicleTypesRef,
+    startYear,
+    endYear = null,
     createdOn = Date.now(),
     modifiedOn = Date.now(),
   }) {
-    if (!make) {
+    if (!makeRef) {
       throw new Error("Car must have a make.");
     }
     if (!model) {
       throw new Error("Car must have a model.");
     }
-    if (!vin) {
-      throw new Error("Car must have a vin.");
+    if (!enginesRef) {
+      throw new Error("Car must have at least one engine.");
     }
-    if (!year) {
-      throw new Error("Car must have a year.");
+    if (!vehicleTypesRef) {
+      throw new Error("Car must have at least one vehicle type.");
     }
-    if (!fuelType) {
-      throw new Error("Car must have a fuel type.");
+    if (!startYear) {
+      throw new Error("Car must have a start year.");
     }
 
     super({ createdOn, modifiedOn });
 
-    this.make = make;
+    this.makeRef = makeRef;
     this.model = model;
-    this.year = year;
-    this.vin = vin;
-    this.fuelType = fuelType;
+    this.enginseRef = enginesRef;
+    this.vehicleTypesRef = vehicleTypesRef;
+    this.startYear = startYear;
+    this.endYear = endYear;
   }
 
-  getMake = () => this.make;
+  getMakeRef = () => this.makeRef;
 
   getModel = () => this.model;
 
-  getVin = () => this.vin;
+  getEnginesRef = () => this.enginseRef;
 
-  getYear = () => this.year;
+  getVehicleTypesRef = () => this.vehicleTypesRef;
 
-  getFuelType = () => this.fuelType;
+  getStartYear = () => this.startYear;
+
+  getEndYear = () => this.endYear;
 }
 
 export default Car;
