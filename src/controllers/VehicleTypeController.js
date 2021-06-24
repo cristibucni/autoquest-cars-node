@@ -1,17 +1,17 @@
-import { EnginesService } from "../services";
+import { VehicleTypesService } from "../services";
 
-class EngineController {
-  getEngines = async (httpRequest) => {
+class VehicleTypeController {
+  getVehicleTypes = async (httpRequest) => {
     const headers = {
       "Content-Type": "application/json",
     };
     const query = httpRequest.query || {};
     try {
-      const engines = await EnginesService.readEngines(query);
+      const vehicleTypes = await VehicleTypesService.readVehicleTypes(query);
       return {
         headers,
         statusCode: 200,
-        body: engines,
+        body: vehicleTypes,
       };
     } catch (e) {
       // TODO: Error logging
@@ -26,18 +26,18 @@ class EngineController {
     }
   };
 
-  getEngine = async (httpRequest) => {
+  getVehicleType = async (httpRequest) => {
     const headers = {
       "Content-Type": "application/json",
     };
     try {
-      const engine = await EnginesService.readEngine({
+      const vehicleType = await VehicleTypesService.readVehicleType({
         id: httpRequest.params.id,
       });
       return {
         headers,
         statusCode: 200,
-        body: engine,
+        body: vehicleType,
       };
     } catch (e) {
       // TODO: Error logging
@@ -52,15 +52,15 @@ class EngineController {
     }
   };
 
-  postEngine = async (httpRequest) => {
+  postVehicleType = async (httpRequest) => {
     try {
-      const { source = {}, ...engineInfo } = httpRequest.body;
+      const { source = {}, ...vehicleTypeInfo } = httpRequest.body;
       source.browser = httpRequest.headers["User-Agent"];
       if (httpRequest.headers["Referer"]) {
         source.referrer = httpRequest.headers["Referer"];
       }
-      const posted = await EnginesService.addEngine({
-        ...engineInfo,
+      const posted = await VehicleTypesService.addVehicleType({
+        ...vehicleTypeInfo,
       });
       return {
         headers: {
@@ -86,19 +86,19 @@ class EngineController {
     }
   };
 
-  patchEngine = async (httpRequest) => {
+  patchVehicleType = async (httpRequest) => {
     try {
-      const { source = {}, ...engineInfo } = httpRequest.body;
+      const { source = {}, ...vehicleTypeInfo } = httpRequest.body;
       source.ip = httpRequest.ip;
       source.browser = httpRequest.headers["User-Agent"];
       if (httpRequest.headers["Referer"]) {
         source.referrer = httpRequest.headers["Referer"];
       }
       const toEdit = {
-        ...engineInfo,
+        ...vehicleTypeInfo,
         id: httpRequest.params.id,
       };
-      const patched = await EnginesService.editEngine(toEdit);
+      const patched = await VehicleTypesService.editVehicleType(toEdit);
       return {
         headers: {
           "Content-Type": "application/json",
@@ -133,12 +133,12 @@ class EngineController {
     }
   };
 
-  deleteEngine = async (httpRequest) => {
+  deleteVehicleType = async (httpRequest) => {
     const headers = {
       "Content-Type": "application/json",
     };
     try {
-      const deleted = await EnginesService.removeEngine({
+      const deleted = await VehicleTypesService.removeVehicleType({
         id: httpRequest.params.id,
       });
       return {
@@ -160,4 +160,4 @@ class EngineController {
   };
 }
 
-export default new EngineController();
+export default new VehicleTypeController();

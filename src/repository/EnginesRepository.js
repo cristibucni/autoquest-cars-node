@@ -3,7 +3,7 @@ import AbstractRepository from "./AbstractRepository";
 
 const KW_TO_METRIC_HP = 1.3596216173;
 
-class EngineRepository extends AbstractRepository {
+class EnginesRepository extends AbstractRepository {
   findAll = async (query = {}) => {
     const db = await this.makeDb();
     const result = await db.collection("engines").find(query);
@@ -71,4 +71,4 @@ class EngineRepository extends AbstractRepository {
   };
 }
 
-export default EngineRepository;
+export default EnginesRepository;

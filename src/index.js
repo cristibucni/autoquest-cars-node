@@ -6,6 +6,7 @@ import CarController from "./controllers/CarController";
 import CarBrandController from "./controllers/CarBrandController";
 import FuelTypeController from "./controllers/FuelTypeController";
 import EngineController from "./controllers/EngineController";
+import VehicleTypeController from "./controllers/VehicleTypeController";
 
 dotenv.config();
 
@@ -57,6 +58,30 @@ app.delete(`/engines/:id`, makeCallback(EngineController.deleteEngine));
 app.delete(`/engines`, makeCallback(EngineController.deleteEngine));
 app.patch(`/engines/:id`, makeCallback(EngineController.patchEngine));
 app.patch(`/engines`, makeCallback(EngineController.patchEngine));
+
+// Vehicle Types
+app.get(
+  `/vehicle_types/:id`,
+  makeCallback(VehicleTypeController.getVehicleType)
+);
+app.get(`/vehicle_types`, makeCallback(VehicleTypeController.getVehicleTypes));
+app.post(`/vehicle_types`, makeCallback(VehicleTypeController.postVehicleType));
+app.delete(
+  `/vehicle_types/:id`,
+  makeCallback(VehicleTypeController.deleteVehicleType)
+);
+app.delete(
+  `/vehicle_types`,
+  makeCallback(VehicleTypeController.deleteVehicleType)
+);
+app.patch(
+  `/vehicle_types/:id`,
+  makeCallback(VehicleTypeController.patchVehicleType)
+);
+app.patch(
+  `/vehicle_types`,
+  makeCallback(VehicleTypeController.patchVehicleType)
+);
 
 // listen for requests
 app.listen(process.env.APP_PORT, () => {
