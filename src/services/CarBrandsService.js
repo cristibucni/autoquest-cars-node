@@ -2,6 +2,17 @@ import CarBrand from "../entities/CarBrand";
 import AbstractService from "./AbstractService";
 
 class CarsBrandService extends AbstractService {
+  addBrands = async (brandsList) => {
+    const brands = brandsList.map((brand) => new CarBrand({ name: brand }));
+
+    return this.db.insertMany(
+      brands.map((brand) => ({
+        name: brand.getName(),
+        createdOn: brand.getCreatedOn(),
+        modifiedOn: brand.getModifiedOn(),
+      }))
+    );
+  };
   addBrand = async (brandInfo) => {
     const brand = new CarBrand(brandInfo);
     const exists = await this.db.findById({ name: brand.getName() });

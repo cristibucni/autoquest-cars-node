@@ -86,6 +86,33 @@ class CarBrandController {
     }
   };
 
+  postBrands = async (httpRequest) => {
+    try {
+      const brands = httpRequest.body;
+      const posted = await CarBrandsService.addBrands(brands);
+      return {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        statusCode: 201,
+        body: { posted },
+      };
+    } catch (e) {
+      // TODO: Error logging
+      console.log(e);
+
+      return {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        statusCode: 400,
+        body: {
+          error: e.message,
+        },
+      };
+    }
+  };
+
   patchBrand = async (httpRequest) => {
     try {
       const { source = {}, ...brandInfo } = httpRequest.body;

@@ -34,6 +34,7 @@ app.patch(`/cars/:id`, makeCallback(CarController.patchCar));
 app.get(`/brands/:id`, makeCallback(CarBrandController.getBrand));
 app.get(`/brands`, makeCallback(CarBrandController.getBrands));
 app.post(`/brands`, makeCallback(CarBrandController.postBrand));
+app.post(`/brands/bulk`, makeCallback(CarBrandController.postBrands));
 app.patch(`/brands/:id`, makeCallback(CarBrandController.patchBrand));
 app.delete(`/brands/:id`, makeCallback(CarBrandController.deleteBrand));
 

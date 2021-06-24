@@ -71,6 +71,12 @@ class CarBrandsRepository extends AbstractRepository {
     return { id, ...insertedInfo };
   };
 
+  insertMany = async (brands) => {
+    const db = await this.makeDb();
+    const result = await db.collection("brands").insertMany(brands);
+    console.log(result);
+  };
+
   update = async ({ _id, ...brandInfo }) => {
     const db = await this.makeDb();
     const result = await db
