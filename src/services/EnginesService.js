@@ -1,16 +1,26 @@
 import Engine from "../entities/Engine";
-import AbstractService from "./AbstractService";
+import {
+  enginesDB as EnginesRepository,
+  fuelTypesDB as FuelTypesRepository,
+} from "../repository";
 import { ObjectId } from "mongodb";
+import EngineDTO from "../dto/EngineDTO";
 
-class EnginesServiceService extends AbstractService {
+class EnginesServiceService {
+  constructor() {
+    this.KW_TO_METRIC_HP = 1.3596216173;
+  }
+
   addEngine = async (engineInfo) => {
     const engine = new Engine(engineInfo);
-    const exists = await this.db.findById({ codes: engine.getCodes() });
+    const exists = await EnginesRepository.findById({
+      codes: engine.getCodes(),
+    });
     if (exists) {
       return exists;
     }
 
-    return this.db.insert({
+    return EnginesRepository.insert({
       name: engine.getName(),
       codes: engine.getCodes(),
       size: engine.getSize(),
@@ -26,14 +36,14 @@ class EnginesServiceService extends AbstractService {
       throw new Error("You must supply an id.");
     }
 
-    const existing = await this.db.findById({ id });
+    const existing = await EnginesRepository.findById({ id });
 
     if (!existing) {
       throw new RangeError("Engine not found.");
     }
     const engine = new Engine({ ...existing, ...changes, modifiedOn: null });
 
-    const updated = await this.db.update({
+    const updated = await EnginesRepository.update({
       name: engine.getName(),
       codes: engine.getCodes(),
       power: engine.getPower(),
@@ -49,11 +59,38 @@ class EnginesServiceService extends AbstractService {
     if (!id) {
       throw new Error("You must supply an engine id.");
     }
-    return await this.db.getEngine(id);
+    const engine = await EnginesRepository.findById(id);
+    return new EngineDTO({
+      id: engine.id,
+      name: engine.name,
+      codes: engine.codes,
+      power: engine.power,
+      size: engine.size,
+      fuel: await FuelTypesRepository.findById(engine.fuelTypeReference),
+      createdOn: engine.createdOn,
+      modifiedOn: engine.modifiedOn,
+    });
   };
 
   readEngines = async (query) => {
-    return await this.db.findAll(query);
+    const engines = await EnginesRepository.findAll(query);
+    return await Promise.all(
+      engines.map(async (engine) => {
+        const fuel = await FuelTypesRepository.findById(
+          engine.fuelTypeReference
+        );
+        return new EngineDTO({
+          id: engine.id,
+          name: engine.name,
+          codes: engine.codes,
+          power: engine.power,
+          size: engine.size,
+          fuel,
+          createdOn: engine.createdOn,
+          modifiedOn: engine.modifiedOn,
+        });
+      })
+    );
   };
 
   removeEngine = async ({ id } = {}) => {
@@ -61,15 +98,15 @@ class EnginesServiceService extends AbstractService {
       throw new Error("You must supply an engine id.");
     }
 
-    const engineToDelete = await this.db.findById({ id });
+    const engineToDelete = await EnginesRepository.findById({ id });
 
-    if (!this.db) {
+    if (!EnginesRepository) {
       return {
         deletedCount: 0,
         message: "Engine not found, nothing to delete.",
       };
     }
-    await this.db.remove(engineToDelete);
+    await EnginesRepository.remove(engineToDelete);
     return {
       deletedCount: 1,
       message: "Engine deleted.",

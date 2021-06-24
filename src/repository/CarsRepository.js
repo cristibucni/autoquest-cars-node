@@ -5,22 +5,10 @@ class CarsRepository extends AbstractRepository {
   findAll = async (query = {}) => {
     const db = await this.makeDb();
     const result = await db.collection("cars").find(query);
-    const cars = (await result.toArray()).map(({ _id: id, ...found }) => ({
+    return (await result.toArray()).map(({ _id: id, ...found }) => ({
       id,
       ...found,
     }));
-
-    //Populate brand
-    await Promise.all(
-      cars.map(async (car, idx) => {
-        cars[idx].make = (await this.findBrandById(car.makeRef)).name;
-        delete cars[idx].makeRef;
-        delete cars[idx].enginesRef;
-        delete cars[idx].vehicleTypesRef;
-      })
-    );
-
-    return cars;
   };
 
   findById = async ({ id: _id }) => {
@@ -32,19 +20,15 @@ class CarsRepository extends AbstractRepository {
       return null;
     }
     const { _id: id, ...info } = result;
-    const car = {
-      id,
-      make: (await this.findBrandById(info.makeRef)).name,
-      ...info,
 
-      engines: await this.findEnginesByIds(info.enginesRef),
-      vehicleTypes: await this.findVehicleTypesByIds(info.vehicleTypesRef),
-    };
-    delete car.makeRef;
-    delete car.enginesRef;
-    delete car.vehicleTypesRef;
+    return { id, ...info };
+  };
 
-    return car;
+  findByBrandId = async (id) => {
+    const db = await this.makeDb();
+    return await (
+      await db.collection("cars").find({ makeRef: new ObjectId(id) })
+    ).toArray();
   };
 
   findByModel = async (car) => {
@@ -88,32 +72,6 @@ class CarsRepository extends AbstractRepository {
     return await db
       .collection("brands")
       .findOne({ _id: new ObjectId(brandId) });
-  };
-
-  // Query to get all engines for a model based on enginesRef
-  findVehicleTypesByIds = async (vehicleTypesRef) => {
-    const vehicleTypes = [];
-
-    // Populate fuel type for every model
-    await Promise.all(
-      vehicleTypesRef.map(async (engineRef) => {
-        vehicleTypes.push(await this.findVehicleTypeById(engineRef));
-      })
-    );
-    return vehicleTypes;
-  };
-
-  // Query to get all engines for a model based on enginesRef
-  findEnginesByIds = async (enginesRef) => {
-    const engines = [];
-
-    // Populate fuel type for every model
-    await Promise.all(
-      enginesRef.map(async (engineRef) => {
-        engines.push(await this.findEngineById(engineRef));
-      })
-    );
-    return engines;
   };
 }
 

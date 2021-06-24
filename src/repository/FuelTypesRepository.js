@@ -1,4 +1,5 @@
 import AbstractRepository from "./AbstractRepository";
+import { ObjectId } from "mongodb";
 
 class FuelTypesRepository extends AbstractRepository {
   findAll = async (query = {}) => {
@@ -8,6 +9,20 @@ class FuelTypesRepository extends AbstractRepository {
       id,
       ...found,
     }));
+  };
+
+  // Query to get fuel type name based on fuelType ref
+  findById = async (fuelTypeId) => {
+    const db = await this.makeDb();
+    const result = await db
+      .collection("fuelTypes")
+      .findOne({ _id: new ObjectId(fuelTypeId) });
+    return {
+      name: result.name,
+      id: result._id,
+      createdOn: result.createdOn,
+      modifiedOn: result.modifiedOn,
+    };
   };
 
   findByName = async (name) => {

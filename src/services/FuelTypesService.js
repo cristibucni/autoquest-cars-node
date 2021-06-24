@@ -1,15 +1,15 @@
 import FuelType from "../entities/FuelType";
-import AbstractService from "./AbstractService";
+import { fuelTypesDB as FuelTypesRepository } from "../repository";
 
-class FuelTypesService extends AbstractService {
+class FuelTypesService {
   addFuelType = async (fuelTypeInfo) => {
     const fuelType = new FuelType(fuelTypeInfo);
-    const exists = await this.db.findByName(fuelType.getName());
+    const exists = await FuelTypesRepository.findByName(fuelType.getName());
     if (exists) {
       return exists;
     }
 
-    return this.db.insert({
+    return FuelTypesRepository.insert({
       name: fuelType.getName(),
       createdOn: fuelType.getCreatedOn(),
       modifiedOn: fuelType.getModifiedOn(),
@@ -20,11 +20,11 @@ class FuelTypesService extends AbstractService {
     if (!id) {
       throw new Error("You must supply a fuel type id.");
     }
-    return await this.db.findFuelTypeById(id);
+    return await FuelTypesRepository.findById(id);
   };
 
   readFuelTypes = async (query) => {
-    return await this.db.findAll(query);
+    return await FuelTypesRepository.findAll(query);
   };
 
   editFuelType = async ({ id, ...changes } = {}) => {
@@ -32,7 +32,7 @@ class FuelTypesService extends AbstractService {
       throw new Error("You must supply an id.");
     }
 
-    const existing = await this.db.findFuelTypeById(id);
+    const existing = await FuelTypesRepository.findById(id);
 
     if (!existing) {
       throw new RangeError("Fuel type not found.");
@@ -43,7 +43,7 @@ class FuelTypesService extends AbstractService {
       modifiedOn: Date.now(),
     });
 
-    const updated = await this.db.update({
+    const updated = await FuelTypesRepository.update({
       _id: existing.id,
       name: fuelType.getName(),
       createdOn: fuelType.getCreatedOn(),
@@ -58,15 +58,15 @@ class FuelTypesService extends AbstractService {
       throw new Error("You must supply a fuel type id.");
     }
 
-    const fuelTypeToDelete = await this.db.findFuelTypeById(id);
+    const fuelTypeToDelete = await FuelTypesRepository.findById(id);
 
-    if (!this.db) {
+    if (!FuelTypesRepository) {
       return {
         deletedCount: 0,
         message: "Fuel type not found, nothing to delete.",
       };
     }
-    await this.db.remove(fuelTypeToDelete);
+    await FuelTypesRepository.remove(fuelTypeToDelete);
     return {
       deletedCount: 1,
       message: "Fuel type deleted.",

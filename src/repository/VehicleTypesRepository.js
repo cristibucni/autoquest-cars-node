@@ -12,6 +12,14 @@ class VehicleTypesRepository extends AbstractRepository {
     }));
   };
 
+  // Query to get engine by engineRef
+  findById = async (vehicleTypeRef) => {
+    const db = await this.makeDb();
+    return await db
+      .collection("vehicleTypes")
+      .findOne({ _id: new ObjectId(vehicleTypeRef) });
+  };
+
   insert = async ({ ...vehicleTypeInfo }) => {
     const db = await this.makeDb();
     const result = await db

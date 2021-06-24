@@ -1,15 +1,15 @@
 import VehicleType from "../entities/VehicleType";
-import AbstractService from "./AbstractService";
+import { vehicleTypesDB as VehicleTypesRepository } from "../repository";
 
-class VehicleTypesService extends AbstractService {
+class VehicleTypesService {
   addVehicleType = async (vehicleTypeInfo) => {
     const vehicleType = new VehicleType(vehicleTypeInfo);
-    const exists = await this.db.getVehicleType(id);
+    const exists = await VehicleTypesRepository.findById(id);
     if (exists) {
       return exists;
     }
 
-    return this.db.insert({
+    return VehicleTypesRepository.insert({
       name: vehicleType.getName(),
       createdOn: vehicleType.getCreatedOn(),
       modifiedOn: vehicleType.getModifiedOn(),
@@ -21,7 +21,7 @@ class VehicleTypesService extends AbstractService {
       throw new Error("You must supply an id.");
     }
 
-    const existing = await this.db.getVehicleType(id);
+    const existing = await VehicleTypesRepository.findById(id);
 
     if (!existing) {
       throw new RangeError("Vehicle type not found.");
@@ -32,7 +32,7 @@ class VehicleTypesService extends AbstractService {
       modifiedOn: null,
     });
 
-    const updated = await this.db.update({
+    const updated = await VehicleTypesRepository.update({
       name: vehicleType.getName(),
       createdOn: vehicleType.getCreatedOn(),
       modifiedOn: vehicleType.getModifiedOn(),
@@ -44,11 +44,11 @@ class VehicleTypesService extends AbstractService {
     if (!id) {
       throw new Error("You must supply a vehicle type id.");
     }
-    return await this.db.getVehicleType(id);
+    return await VehicleTypesRepository.findById(id);
   };
 
   readVehicleTypes = async (query) => {
-    return await this.db.findAll(query);
+    return await VehicleTypesRepository.findAll(query);
   };
 
   removeVehicleType = async ({ id } = {}) => {
@@ -56,15 +56,15 @@ class VehicleTypesService extends AbstractService {
       throw new Error("You must supply an vehicle type id.");
     }
 
-    const vehicleTypeToDelete = await this.db.getVehicleType(id);
+    const vehicleTypeToDelete = await VehicleTypesRepository.findById(id);
 
-    if (!this.db) {
+    if (!VehicleTypesRepository) {
       return {
         deletedCount: 0,
         message: "Vehicle type not found, nothing to delete.",
       };
     }
-    await this.db.remove(vehicleTypeToDelete);
+    await VehicleTypesRepository.remove(vehicleTypeToDelete);
     return {
       deletedCount: 1,
       message: "VehicleType deleted.",

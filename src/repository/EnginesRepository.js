@@ -1,26 +1,22 @@
 import AbstractRepository from "./AbstractRepository";
+import { ObjectId } from "mongodb";
 
 class EnginesRepository extends AbstractRepository {
   findAll = async (query = {}) => {
     const db = await this.makeDb();
     const result = await db.collection("engines").find(query);
-    const engines = (await result.toArray()).map(({ _id: id, ...found }) => ({
+    return (await result.toArray()).map(({ _id: id, ...found }) => ({
       id,
       ...found,
-      powerHP: Math.floor(found.power * this.KW_TO_METRIC_HP),
     }));
+  };
 
-    // Populate fuel based on fuelTypeReference
-    await Promise.all(
-      engines.map(async (engine, idx) => {
-        engines[idx].fuel = await this.findFuelTypeById(
-          engine.fuelTypeReference
-        );
-        delete engines[idx].fuelTypeReference;
-      })
-    );
-
-    return engines;
+  // Query to get engine by engineRef
+  findById = async (engineRef) => {
+    const db = await this.makeDb();
+    return await db
+      .collection("engines")
+      .findOne({ _id: new ObjectId(engineRef) });
   };
 
   insert = async ({ ...engineInfo }) => {

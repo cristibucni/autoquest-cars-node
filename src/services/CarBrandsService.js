@@ -1,11 +1,16 @@
 import CarBrand from "../entities/CarBrand";
-import AbstractService from "./AbstractService";
+import {
+  brandsDB as BrandsRepository,
+  carsDB as CarsRepository,
+} from "../repository";
+import CarDTO from "../dto/CarDTO";
+import CarBrandDetailsDTO from "../dto/CarBrandDetailsDTO";
 
-class CarsBrandService extends AbstractService {
+class CarsBrandService {
   addBrands = async (brandsList) => {
     const brands = brandsList.map((brand) => new CarBrand({ name: brand }));
 
-    return this.db.insertMany(
+    return BrandsRepository.insertMany(
       brands.map((brand) => ({
         name: brand.getName(),
         createdOn: brand.getCreatedOn(),
@@ -15,12 +20,12 @@ class CarsBrandService extends AbstractService {
   };
   addBrand = async (brandInfo) => {
     const brand = new CarBrand(brandInfo);
-    const exists = await this.db.findById({ name: brand.getName() });
+    const exists = await BrandsRepository.findById({ name: brand.getName() });
     if (exists) {
       return exists;
     }
 
-    return this.db.insert({
+    return BrandsRepository.insert({
       name: brand.getName(),
       createdOn: brand.getCreatedOn(),
       modifiedOn: brand.getModifiedOn(),
@@ -31,13 +36,39 @@ class CarsBrandService extends AbstractService {
     if (!id) {
       throw new Error("You must supply a brand id.");
     }
-    return await this.db.findById({
+    const brand = await BrandsRepository.findById({
       id,
+    });
+    const models = await this.findModels(brand);
+
+    return new CarBrandDetailsDTO({
+      id: brand.id,
+      name: brand.name,
+      createdOn: brand.createdOn,
+      modifiedOn: brand.modifiedOn,
+      models,
     });
   };
 
+  // Query to get all models for the brand based on id
+  findModels = async (brand) => {
+    const cars = await CarsRepository.findByBrandId(brand.id);
+    return cars.map(
+      (car) =>
+        new CarDTO({
+          id: car._id,
+          model: car.model,
+          modifiedOn: car.modifiedOn,
+          createdOn: car.createdOn,
+          endYear: car.endYear,
+          startYear: car.startYear,
+          make: brand.name,
+        })
+    );
+  };
+
   readBrands = async (query) => {
-    return await this.db.findAll(query);
+    return await BrandsRepository.findAll(query);
   };
 
   removeBrand = async ({ id } = {}) => {
@@ -45,15 +76,15 @@ class CarsBrandService extends AbstractService {
       throw new Error("You must supply a brand id.");
     }
 
-    const brandToDelete = await this.db.findById({ id });
+    const brandToDelete = await BrandsRepository.findById({ id });
 
-    if (!this.db) {
+    if (!BrandsRepository) {
       return {
         deletedCount: 0,
         message: "Brand not found, nothing to delete.",
       };
     }
-    await this.db.remove(brandToDelete);
+    await BrandsRepository.remove(brandToDelete);
     return {
       deletedCount: 1,
       message: "Brand deleted.",
